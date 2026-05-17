@@ -1,57 +1,155 @@
 # GymFlow
 
-GymFlow; spor salonları için geliştirilmiş, Django tabanlı bir yönetim panelidir. Üye kayıtları, üyelik paketleri, ödeme takibi ve operasyon raporları tek bir yönetici arayüzünde toplanır.
+<p align="center">
+  Spor salonları için geliştirilen, üyelik ve tahsilat operasyonlarını tek panelde yöneten Django tabanlı yönetim uygulaması.
+</p>
 
-Bu proje statik bir arayüz denemesi değil; gerçek iş kurallarını modelleyen, doğrulama ve veri bütünlüğüne odaklanan bir CRM uygulamasıdır. Üyeliklerde paket fiyatı geçmişe dönük korunur, ödemeler kalan borca göre doğrulanır, iptal edilen tahsilatlar denetlenebilir şekilde saklanır ve dashboard verileri ilişkisel kayıtlardan üretilir.
+<p align="center">
+  <a href="https://gymflow-jpmt.onrender.com">Canlı Demo</a>
+  ·
+  <a href="https://github.com/sametssenturk/gymflow">Kaynak Kod</a>
+</p>
 
-## Özellikler
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white" alt="Python 3.12">
+  <img src="https://img.shields.io/badge/Django-5.2-0C4B33?logo=django&logoColor=white" alt="Django 5.2">
+  <img src="https://img.shields.io/badge/PostgreSQL-Neon-00E699?logo=postgresql&logoColor=white" alt="PostgreSQL Neon">
+  <img src="https://img.shields.io/badge/Deploy-Render-4F46E5?logo=render&logoColor=white" alt="Render">
+  <img src="https://img.shields.io/badge/Tests-63%20Passed-22C55E" alt="63 tests passed">
+</p>
 
-- Üye listeleme, arama, oluşturma, düzenleme ve silme akışları
-- E-posta ve telefon için benzersizlik doğrulamaları
-- Üye detay ekranında aktif üyelik, geçmiş üyelikler, ödemeler ve borç durumu
-- Paket yönetimi: süre, fiyat, açıklama ve aktif/pasif durumu
-- Üyelik yaşam döngüsü: planlandı, aktif, süresi doldu ve donduruldu durumları
-- Üyelik dondurma akışı ve bitiş tarihinin otomatik güncellenmesi
-- Ödeme kaydı oluşturma, fazla ödeme engeli, ödeme iptali ve iptal geçmişi
-- Dashboard KPI'ları: toplam üye, aktif üyelik, yaklaşan bitişler, günlük/aylık tahsilat ve açık bakiye
-- Detaylı istatistik sayfası, gelir trendleri, paket dağılımı, ödeme yöntemi kırılımı ve CSV dışa aktarımı
-- Giriş yapmadan incelenebilen salt okunur demo dashboard
-- Ortam değişkenleriyle yapılandırılabilen deploy ayarları
+## Proje Özeti
 
-## Teknolojiler
+GymFlow, spor salonlarının günlük operasyonlarını sade ve hızlı bir akışla yönetebilmesi için tasarlanmış bir web uygulamasıdır. Uygulama; üye kayıtlarını, üyelik paketlerini, tahsilat akışını, yaklaşan bitişleri ve yönetim raporlarını tek bir arayüzde toplar.
+
+Bu proje yalnızca arayüz odaklı bir demo değildir. İş kurallarını modelleyen gerçek bir yönetim paneli mantığıyla geliştirilmiştir:
+
+- Üyelik fiyatı geçmişe dönük korunur.
+- Ödemeler kalan bakiyeye göre doğrulanır.
+- İptal edilen tahsilatlar ayrı durum bilgisiyle izlenir.
+- Dashboard ve istatistik ekranları doğrudan ilişkisel veriden üretilir.
+- Demo veri seti tek komutla yeniden oluşturulabilir.
+
+## Canlı Demo
+
+**Canlı adres:** [https://gymflow-jpmt.onrender.com](https://gymflow-jpmt.onrender.com)
+
+**Demo giriş bilgileri**
+
+- Kullanıcı adı: `demo-admin`
+- Parola: `Demo12345!`
+
+**Canlı demo davranışı**
+
+- Canlı ortam tek bir paylaşımlı veritabanı üzerinde çalışır.
+- Demo hesabıyla yapılan değişiklikler aynı veritabanına yazılır.
+- Bu nedenle bir ziyaretçinin yaptığı değişiklikler diğer ziyaretçilere de yansıyabilir.
+- Mevcut canlı yapılandırmada otomatik veri sıfırlama kapalıdır; veri, yeniden seed edilene kadar son haliyle kalır.
+
+## Ekran Görüntüleri
+
+### Kontrol Paneli
+
+![GymFlow kontrol paneli](docs/images/gymflow-dashboard.png)
+
+### İstatistikler
+
+![GymFlow istatistik ekranı](docs/images/gymflow-stats.png)
+
+### Üye Yönetimi
+
+![GymFlow üye listesi](docs/images/gymflow-members.png)
+
+## Öne Çıkan Özellikler
+
+- Yönetici girişi ve yetkili panel erişimi
+- Üye oluşturma, düzenleme, silme ve detay görüntüleme
+- Üye bazında üyelik geçmişi, ödeme geçmişi ve bakiye takibi
+- Üyelik paketi oluşturma ve aktif/pasif paket yönetimi
+- Üyelik yaşam döngüsü: planlandı, aktif, donduruldu, süresi doldu
+- Üyelik dondurma akışı ve bitiş tarihinin güncellenmesi
+- Nakit ve kart ödemeleri için tahsilat kaydı
+- Fazla ödeme engeli ve finansal kayıt doğrulamaları
+- İptal edilen ödemelerin ayrı durum ile izlenmesi
+- Dashboard KPI'ları: toplam üye, aktif üyelik, yaklaşan bitiş, günlük tahsilat, açık bakiye
+- Detaylı istatistik ekranı: gelir trendi, ödeme yöntemi dağılımı, paket yoğunluğu, borç görünümü
+- CSV rapor çıktısı
+- Giriş yapmadan görüntülenebilen read-only demo dashboard
+- Ortam değişkenleriyle yönetilen production uyumlu deploy yapısı
+
+## Mimari
+
+GymFlow, Django'nun server-rendered yaklaşımıyla geliştirilmiştir. Kimlik doğrulama, iş kuralları, raporlama ve sunum katmanları birbirinden ayrılmıştır.
+
+### Katmanlar
+
+- `accounts`: giriş akışı, özel kullanıcı modeli, yönetici oturumu
+- `members`: üye CRUD akışları, üye detay ekranı
+- `memberships`: paket ve üyelik modelleri, üyelik yaşam döngüsü
+- `payments`: tahsilat kayıtları, iptal ve doğrulama kuralları
+- `dashboard`: KPI üretimi, rapor ekranları, CSV çıktısı, demo veri üretimi
+- `core`: genel ana sayfa ve ortak yardımcı yapılar
+- `config`: Django ayarları, URL yapısı, WSGI/ASGI girişleri
+
+### Veri Akışı
+
+```mermaid
+flowchart LR
+  A[Member] --> B[Membership]
+  C[MembershipPlan] --> B
+  B --> D[Payment]
+  A --> E[Dashboard Reporting]
+  B --> E
+  D --> E
+```
+
+### Proje Yapısı
+
+```text
+accounts/         Kimlik doğrulama, admin erişimi ve kullanıcı modeli
+config/           Django ayarları, URL yönlendirmeleri, ASGI/WSGI girişleri
+core/             Genel ana sayfa ve ortak yardımcı yapılar
+dashboard/        Dashboard, istatistikler, CSV raporu, demo seed komutları
+members/          Üye yönetimi ve detay ekranları
+memberships/      Paket ve üyelik yönetimi
+payments/         Tahsilat akışları ve finansal doğrulamalar
+static/           CSS ve statik varlıklar
+templates/        Django template dosyaları
+docs/images/      README ekran görüntüleri
+```
+
+## Temel İş Kuralları
+
+- `Membership.agreed_price`, paket fiyatı sonradan değişse bile eski üyelik kaydının fiyatını korur.
+- Aynı üyeye eş zamanlı olarak çakışan açık üyelik açılması engellenir.
+- Dondurulan üyeliklerde bitiş tarihi dondurma süresi kadar uzatılır.
+- `Payment` kayıtları, bağlı üyeliğin kalan bakiyesini aşamaz.
+- İptal edilen ödemeler fiziksel olarak kaybolmaz; `VOIDED` statüsüyle izlenir.
+- Dashboard raporları, saklanan özetlerden değil, doğrudan operasyonel veriden hesaplanır.
+
+## Teknoloji Yığını
 
 - Python 3.12
 - Django 5.2
-- SQLite (yerel geliştirme varsayılanı)
-- PostgreSQL desteği (`DATABASE_URL` ile)
-- WhiteNoise
+- PostgreSQL
+- SQLite
 - Gunicorn
+- WhiteNoise
 - Pillow
+- HTML
+- CSS
+- Bootstrap Icons
 
-## Proje Yapısı
+## Veritabanı Modeli
 
-```text
-accounts/      Kimlik doğrulama, yönetici erişimi ve özel kullanıcı modeli
-core/          Genel ana sayfa ve ortak form yardımcıları
-dashboard/     KPI dashboard, raporlar, CSV çıktısı ve demo veri üretimi
-members/       Üye CRUD, üye detay ekranı ve üyeye bağlı üyelik işlemleri
-memberships/   Paket ve üyelik modelleri, formları ve ekranları
-payments/      Tahsilat oluşturma, doğrulama, güncelleme ve iptal akışları
-templates/     Django template dosyaları
-static/        Uygulama stil dosyaları
-config/        Django ayarları, URL yönlendirmeleri, ASGI/WSGI girişleri
-```
+Uygulama dört temel model üzerine kuruludur:
 
-## Veri Modeli
+- `Member`: üye profili, iletişim bilgileri, notlar, profil fotoğrafı
+- `MembershipPlan`: paket adı, süresi, fiyatı ve aktiflik durumu
+- `Membership`: üye-paket ilişkisi, başlangıç ve bitiş tarihi, durum, anlaşma fiyatı
+- `Payment`: üye ve üyeliğe bağlı ödeme kaydı, yöntem, durum ve iptal bilgisi
 
-Uygulama dört temel operasyonel model üzerine kuruludur:
-
-- `Member`: üye profili, iletişim bilgileri, fotoğraf, notlar ve hesap özeti
-- `MembershipPlan`: üyelik paket kataloğu
-- `Membership`: üye ile paket arasındaki ilişki, tarih aralığı, durum ve fiyat geçmişi
-- `Payment`: üyeye ve üyeliğe bağlı tahsilat kaydı
-
-`Membership.agreed_price` alanı, paket fiyatı daha sonra değişse bile geçmiş üyeliklerin kendi dönemindeki fiyatla kalmasını sağlar.
+Yerelde varsayılan veritabanı `SQLite` iken, production ortamında `DATABASE_URL` üzerinden `PostgreSQL` kullanılır.
 
 ## Yerel Kurulum
 
@@ -72,38 +170,88 @@ Yerel adresler:
 
 ## Demo Veri Seti
 
-Demo veri üretimi, 2024'ten beri kullanılan bir spor salonu senaryosunu temsil edecek şekilde tasarlanmıştır. Paket kataloğu korunabilir; üye, üyelik ve ödeme kayıtları yeniden üretilebilir.
+Proje, portföy gösterimi ve gerçekçi kullanım senaryosu için özel bir demo veri üretim akışı içerir. `prepare_portfolio_demo` komutu:
 
-Ödeme verileri gerçekçi kalacak şekilde oluşturulur:
+- demo yönetici hesabını oluşturur veya günceller,
+- demo üyeleri yeniden üretir,
+- üyelikleri ve ödeme geçmişini senaryolaştırır,
+- istenirse tüm operasyonel veriyi temizleyip seed işlemini baştan kurar.
 
-- Aylık, 3 aylık ve 6 aylık paketler tek tahsilatla kapatılır.
-- Yıllık paketlerde 1, 2 veya 3 taksitli tahsilat senaryoları üretilebilir.
-- Tutarlar küsüratsız ve tam lira değerleridir.
-- İptal edilen ödemeler ayrı kayıt durumu ile saklanır.
+Örnek kullanım:
 
 ```powershell
 python manage.py prepare_portfolio_demo `
   --username demo-admin `
-  --password "<güçlü-bir-parola>" `
+  --password "güçlü-bir-parola" `
   --email demo@gymflow.local `
   --members 160 `
   --reset-all-data `
   --preserve-plans
 ```
 
-Varsayılan `160` üye hedefi, üyelik ve ödeme geçmişiyle birlikte yaklaşık bin operasyon kaydı üretir.
+Varsayılan kurgu, yaklaşık `160` üye ölçeğinde geniş bir operasyon veri seti üretir. Seed akışı, production benzeri ortamlarda da hızlı çalışacak şekilde optimize edilmiştir.
 
-## Veritabanı Davranışı
+## Deploy Mimarisi
 
-Yerel geliştirmede `DATABASE_URL` verilmezse uygulama otomatik olarak `db.sqlite3` kullanır. Bu dosya geliştirme ortamına aittir ve `.gitignore` içindedir; GitHub'a yüklenmez.
+GymFlow'un güncel canlı kurulumu aşağıdaki yapı ile yayınlanmaktadır:
 
-Deploy ortamında kalıcı veri için PostgreSQL önerilir. `DATABASE_URL` ortam değişkeni tanımlandığında Django PostgreSQL bağlantısını kullanır. Bu sayede aynı kod tabanı yerelde SQLite, canlı ortamda PostgreSQL ile çalışabilir.
+- **Uygulama katmanı:** Render Web Service
+- **Veritabanı katmanı:** Neon PostgreSQL
+- **Uygulama sunucusu:** Gunicorn
+- **Statik dosyalar:** WhiteNoise
+- **Güvenlik ve production ayarları:** environment variables üzerinden Django settings
 
-## Kimlik Bilgileri
+### Production Akışı
 
-Gerçek parola veya gizli anahtar kaynak koduna yazılmaz. `.env.example` yalnızca örnek değerler içerir.
+1. GitHub repository Render'a bağlanır.
+2. Render build aşamasında bağımlılıkları kurar ve `collectstatic` çalıştırır.
+3. Uygulama ayağa kalkarken `migrate` çalışır.
+4. Django, Neon PostgreSQL veritabanına bağlanır.
+5. WhiteNoise ile statik dosyalar aynı servis üzerinden sunulur.
 
-Demo yönetici hesabı deploy veya yerel kurulum sırasında `prepare_portfolio_demo` komutu ile oluşturulur. Canlı demo bilgileri yayınlandıktan sonra README'ye ayrıca eklenebilir; bu hesap yalnızca portföy demosu için ayrılmış olmalıdır.
+### Build ve Start Komutları
+
+**Build**
+
+```powershell
+pip install -r requirements.txt && python manage.py collectstatic --noinput
+```
+
+**Start**
+
+```powershell
+python manage.py migrate && gunicorn config.wsgi --bind 0.0.0.0:$PORT --log-file -
+```
+
+`Procfile` içinde de aynı uygulama başlangıç komutu tanımlıdır.
+
+## Ortam Değişkenleri
+
+Temel production değişkenleri:
+
+| Değişken | Açıklama |
+| --- | --- |
+| `SECRET_KEY` | Django uygulama gizli anahtarı |
+| `DEBUG` | Production ortamında `0` olmalıdır |
+| `ALLOWED_HOSTS` | İzin verilen host listesi |
+| `CSRF_TRUSTED_ORIGINS` | HTTPS origin listesi |
+| `DATABASE_URL` | PostgreSQL veya SQLite bağlantı adresi |
+| `DB_SSLMODE` | PostgreSQL SSL modu |
+| `USE_X_FORWARDED_PROTO` | Proxy arkasında HTTPS bilgisini kullanır |
+| `USE_X_FORWARDED_HOST` | Gerçek host bilgisini üst katmandan alır |
+| `SECURE_SSL_REDIRECT` | HTTP isteklerini HTTPS'e yönlendirir |
+| `SESSION_COOKIE_SECURE` | Oturum çerezlerini secure modda tutar |
+| `CSRF_COOKIE_SECURE` | CSRF çerezlerini secure modda tutar |
+| `ALLOW_SQLITE_IN_PRODUCTION` | Production'da SQLite kullanımını kontrol eder |
+| `PORTFOLIO_DEMO_USERNAME` | Demo yönetici kullanıcı adı |
+| `PORTFOLIO_DEMO_PASSWORD` | Demo yönetici parolası |
+| `PORTFOLIO_DEMO_EMAIL` | Demo yönetici e-postası |
+| `PORTFOLIO_DEMO_MEMBER_COUNT` | Üretilecek demo üye sayısı |
+| `PORTFOLIO_DEMO_RESET_ON_LOGIN` | Girişte otomatik reseed davranışı |
+| `PORTFOLIO_DEMO_RESET_ALL_DATA` | Seed öncesi operasyon verisini temizler |
+| `PORTFOLIO_DEMO_PRESERVE_PLANS` | Paket kataloğunu koruyarak seed çalıştırır |
+
+Yerel örnek ortam dosyası için `.env.example` kullanılabilir.
 
 ## Kalite Kontrolleri
 
@@ -112,7 +260,7 @@ python manage.py check
 python manage.py test
 ```
 
-Production benzeri kontrol:
+Production benzeri doğrulama:
 
 ```powershell
 $env:DEBUG='0'
@@ -122,47 +270,11 @@ $env:ALLOWED_HOSTS='127.0.0.1,localhost'
 python manage.py check --deploy
 ```
 
-`ALLOW_SQLITE_IN_PRODUCTION=1` sadece bilinçli demo ortamları için kullanılmalıdır. Kalıcı yayın ortamında PostgreSQL tercih edilmelidir.
+Güncel durumda proje test paketi `63` test ile başarıyla doğrulanmıştır.
 
-## Deploy Notları
+## Git'e Dahil Edilmeyen Dosyalar
 
-Build komutları:
-
-```powershell
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py collectstatic --noinput
-python manage.py prepare_portfolio_demo --reset-all-data --preserve-plans
-```
-
-Start komutu:
-
-```powershell
-gunicorn config.wsgi --bind 0.0.0.0:$PORT --log-file -
-```
-
-`Procfile` aynı start komutunu içerir.
-
-Temel ortam değişkenleri:
-
-| Değişken | Açıklama |
-| --- | --- |
-| `SECRET_KEY` | Django imzalama anahtarı |
-| `DEBUG` | Canlı ortamda `0` olmalıdır |
-| `ALLOWED_HOSTS` | Virgülle ayrılmış izinli host listesi |
-| `CSRF_TRUSTED_ORIGINS` | Deploy edilen HTTPS origin değerleri |
-| `DATABASE_URL` | PostgreSQL veya SQLite bağlantı adresi |
-| `DB_SSLMODE` | PostgreSQL SSL modu |
-| `USE_X_FORWARDED_PROTO` | HTTPS proxy arkasında etkinleştirilir |
-| `USE_X_FORWARDED_HOST` | Platform orijinal host bilgisini iletiyorsa etkinleştirilir |
-| `PORTFOLIO_DEMO_USERNAME` | Demo yönetici kullanıcı adı |
-| `PORTFOLIO_DEMO_PASSWORD` | Demo yönetici parolası |
-| `PORTFOLIO_DEMO_MEMBER_COUNT` | Üretilecek demo üye sayısı |
-| `PORTFOLIO_DEMO_PRESERVE_PLANS` | Veri yenilenirken paket kataloğunu korur |
-
-## GitHub'a Dahil Edilmeyen Dosyalar
-
-Aşağıdaki dosyalar yerel çalışma çıktısıdır ve repoya eklenmemelidir:
+Repository dışında tutulan tipik dosyalar:
 
 - `.env`
 - `db.sqlite3`
@@ -170,4 +282,16 @@ Aşağıdaki dosyalar yerel çalışma çıktısıdır ve repoya eklenmemelidir:
 - `staticfiles/`
 - `*.log`
 - `__pycache__/`
-- `.venv/` veya `venv/`
+- `.venv/`
+- `venv/`
+
+## Son Durum
+
+Bu repository'nin güncel hali:
+
+- canlı deploy edilmiş,
+- Neon PostgreSQL ile production veritabanına bağlanmış,
+- paylaşımlı demo hesabı ile erişilebilir,
+- seed akışı optimize edilmiş,
+- testleri geçmiş,
+- portföy sunumuna uygun ekran görüntüleriyle belgelenmiş durumdadır.
