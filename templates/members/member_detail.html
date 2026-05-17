@@ -1,0 +1,241 @@
+{% extends "app_base.html" %}
+{% block title %}GymFlow | {{ member.full_name }}{% endblock %}
+{% block page_title %}Üye Detayı{% endblock %}
+
+{% block content %}
+<div class="section-card mb-4">
+  <div class="d-flex flex-column flex-xl-row justify-content-between gap-4">
+    <div class="d-flex align-items-start gap-4">
+      {% if member.photo %}
+        <img src="{{ member.photo.url }}" alt="{{ member.full_name }}" class="avatar-photo xl">
+      {% else %}
+        <div class="avatar-circle xl">{{ member.full_name|slice:":1"|upper }}</div>
+      {% endif %}
+      <div>
+        <span class="section-kicker">Üye profili</span>
+        <h2 class="section-title mb-2">{{ member.full_name }}</h2>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <span class="badge badge-soft"><i class="bi bi-envelope"></i> {{ member.email|default:"E-posta eklenmedi" }}</span>
+          <span class="badge badge-soft"><i class="bi bi-telephone"></i> {{ member.phone|default:"Telefon eklenmedi" }}</span>
+          <span class="badge {% if member.has_debt %}bg-warning text-dark{% else %}bg-success{% endif %}">
+            {% if member.has_debt %}Borç var{% else %}Borç yok{% endif %}
+          </span>
+        </div>
+        <p class="text-soft mb-0">{{ member.notes|default:"Bu üye için henüz not girilmedi." }}</p>
+      </div>
+    </div>
+    <div class="d-flex flex-wrap gap-2 align-items-start">
+      {% if not member.has_open_membership %}
+        <a href="{% url 'members:membership_add' member.pk %}" class="btn btn-accent">
+          <i class="bi bi-calendar2-plus"></i>
+          Yeni Üyelik
+        </a>
+      {% endif %}
+      {% if member.active_membership %}
+        <a href="{% url 'members:membership_freeze' member.pk member.active_membership.pk %}" class="btn btn-ghost">
+          <i class="bi bi-pause-circle"></i>
+          Dondur
+        </a>
+      {% endif %}
+      <a href="{% url 'payments:add' %}?member={{ member.pk }}" class="btn btn-ghost">
+        <i class="bi bi-cash-coin"></i>
+        Ödeme Ekle
+      </a>
+      <a href="{% url 'members:edit' member.pk %}" class="btn btn-outline-light">
+        <i class="bi bi-pencil"></i>
+        Düzenle
+      </a>
+      <a href="{% url 'members:delete' member.pk %}" class="btn btn-outline-danger">
+        <i class="bi bi-trash"></i>
+        Sil
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="summary-strip mb-4">
+  <div>
+    <div class="fw-semibold">Üye merkezi</div>
+    <small class="text-soft">
+      Bu kart üzerinden kişi bilgilerini, üyelik geçmişini ve tahsilatları tek yerde yönetirsiniz.
+    </small>
+  </div>
+  <span class="badge badge-soft">Üye • Üyelik • Ödeme</span>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card h-100">
+      <div class="stat-icon bg-soft-blue"><i class="bi bi-calendar2-check"></i></div>
+      <div>
+        <div class="stat-label">Mevcut Üyelik</div>
+        <div class="stat-value">{{ member.current_membership_status }}</div>
+        <small class="text-soft">{% if member.current_membership %}{{ member.current_membership.plan.name }}{% else %}Kayıt yok{% endif %}</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card h-100">
+      <div class="stat-icon bg-soft-green"><i class="bi bi-wallet2"></i></div>
+      <div>
+        <div class="stat-label">Kalan Borç</div>
+        <div class="stat-value">₺{{ member.balance_due|floatformat:2 }}</div>
+        <small class="text-soft">Tüm üyelik kayıtlarına göre hesaplanır</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card h-100">
+      <div class="stat-icon bg-soft-amber"><i class="bi bi-cash-stack"></i></div>
+      <div>
+        <div class="stat-label">Toplam Ödeme</div>
+        <div class="stat-value">₺{{ member.total_paid|floatformat:2 }}</div>
+        <small class="text-soft">İptal edilmemiş tahsilat kayıtları</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-xl-6">
+    <div class="section-card h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <span class="section-kicker">Üye hareketleri</span>
+          <h3 class="section-title mb-0">Kayıtlı üyelikler</h3>
+        </div>
+        {% if member.has_open_membership %}
+          <span class="badge badge-soft">
+            {% if member.open_membership.status == "PAUSED" %}
+              Dondurulmuş üyelik açık
+            {% elif member.open_membership.status == "PLANNED" %}
+              Planlı üyelik var
+            {% else %}
+              Aktif üyelik devam ediyor
+            {% endif %}
+          </span>
+        {% else %}
+          <a href="{% url 'members:membership_add' member.pk %}" class="btn btn-ghost btn-sm">Yeni Üyelik</a>
+        {% endif %}
+      </div>
+
+      {% if member.latest_membership and not member.has_open_membership %}
+        <div class="alert alert-info border-0 mb-3">
+          Geçmiş üyelikler korunur. Yeni dönem başlatmak için yeni üyelik kaydı açın.
+        </div>
+      {% endif %}
+
+      {% if memberships %}
+        <div class="table-responsive">
+          <table class="table table-glass align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Paket</th>
+                <th>Tarih</th>
+                <th>Durum</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for membership in memberships %}
+                <tr>
+                  <td>
+                    <div class="fw-semibold">{{ membership.plan.name }}</div>
+                    <small class="text-soft">Üyelik bedeli: ₺{{ membership.agreed_price|floatformat:2 }}</small>
+                  </td>
+                  <td>
+                    <div>{{ membership.start_date|date:"d.m.Y" }} - {{ membership.end_date|date:"d.m.Y" }}</div>
+                    <small class="text-soft">{{ membership.days_remaining }} gün kaldı</small>
+                  </td>
+                  <td>
+                    <span class="badge bg-{{ membership.status_badge_class }}">{{ membership.get_status_display }}</span>
+                  </td>
+                  <td class="text-end">
+                    <a href="{% url 'members:membership_edit' member.pk membership.pk %}" class="btn btn-outline-light btn-sm">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'members:membership_delete' member.pk membership.pk %}" class="btn btn-outline-danger btn-sm ms-1">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon"><i class="bi bi-calendar2-x"></i></div>
+          <h3>Henüz üyelik yok</h3>
+          <p class="text-soft mb-0">Bu üyeye bir paket ekleyerek süreci başlatabilirsiniz.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-xl-6">
+    <div class="section-card h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <span class="section-kicker">Ödeme geçmişi</span>
+          <h3 class="section-title mb-0">Tahsilatlar</h3>
+        </div>
+        <a href="{% url 'payments:add' %}?member={{ member.pk }}" class="btn btn-ghost btn-sm">Ödeme Ekle</a>
+      </div>
+
+      {% if payments %}
+        <div class="table-responsive">
+          <table class="table table-glass align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Tarih</th>
+                <th>Üyelik</th>
+                <th>Yöntem</th>
+                <th>Tutar</th>
+                <th>Durum</th>
+                <th class="text-end">İşlem</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for payment in payments %}
+                <tr class="{% if not payment.is_active_record %}opacity-75{% endif %}">
+                  <td>{{ payment.payment_date|date:"d.m.Y" }}</td>
+                  <td>
+                    <div class="fw-semibold">{{ payment.membership.plan.name }}</div>
+                    <small class="text-soft">{{ payment.membership.period_label }}</small>
+                  </td>
+                  <td>{{ payment.method_label }}</td>
+                  <td>₺{{ payment.amount|floatformat:2 }}</td>
+                  <td>
+                    <span class="badge {% if payment.is_active_record %}bg-success{% else %}bg-secondary{% endif %}">
+                      {{ payment.status_label }}
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    {% if payment.is_active_record %}
+                      <a href="{% url 'payments:edit' payment.pk %}" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="{% url 'payments:delete' payment.pk %}" class="btn btn-outline-danger btn-sm ms-1">
+                        <i class="bi bi-x-circle"></i>
+                      </a>
+                    {% else %}
+                      <span class="text-soft small">Arşiv</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon"><i class="bi bi-receipt"></i></div>
+          <h3>Henüz ödeme yok</h3>
+          <p class="text-soft mb-0">İlk ödeme kaydı burada görünecek.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

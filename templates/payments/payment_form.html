@@ -1,0 +1,49 @@
+{% extends "app_base.html" %}
+{% block title %}GymFlow | {% if object %}Ödeme Düzenle{% else %}Yeni Ödeme{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Ödeme Düzenle{% else %}Yeni Ödeme{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-shell">
+  <div class="mb-4">
+    <span class="section-kicker">Ödeme ekleme</span>
+    <h2 class="section-title mb-2">{% if object %}Tahsilat kaydını görüntüleyin veya notunu güncelleyin{% else %}Yeni tahsilat kaydı{% endif %}</h2>
+    <p class="text-soft mb-0">Ödemeyi ilgili üyelikle eşleştirin ve nakit/kart yöntemini seçin.</p>
+  </div>
+
+  {% if object %}
+    <div class="alert alert-warning border-0 mb-4">
+      Finansal geçmişi korumak için ödeme tutarı, tarih, yöntem ve bağlı üyelik kilitlidir.
+      Hatalı kayıt için bu ödemeyi iptal edip doğru bilgilerle yeni kayıt açın.
+    </div>
+  {% endif %}
+
+  {% if selected_member %}
+    <div class="summary-strip mb-4">
+      <div class="d-flex align-items-center gap-3">
+        {% if selected_member.photo %}
+          <img src="{{ selected_member.photo.url }}" alt="{{ selected_member.full_name }}" class="avatar-photo sm">
+        {% else %}
+          <div class="avatar-circle sm">{{ selected_member.full_name|slice:":1"|upper }}</div>
+        {% endif %}
+        <div>
+          <div class="fw-semibold">{{ selected_member.full_name }}</div>
+          <small class="text-soft">{{ selected_member.current_membership_status }}</small>
+        </div>
+      </div>
+      <a href="{% url 'members:detail' selected_member.pk %}" class="btn btn-ghost btn-sm">Üye Profili</a>
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include "includes/form_fields.html" %}
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <button type="submit" class="btn btn-accent">
+        <i class="bi bi-save"></i>
+        Kaydet
+      </button>
+      <a href="{% url 'payments:list' %}" class="btn btn-ghost">Vazgeç</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

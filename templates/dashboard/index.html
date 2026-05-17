@@ -1,0 +1,502 @@
+{% extends "app_base.html" %}
+{% block title %}GymFlow | Kontrol Paneli{% endblock %}
+{% block page_title %}Kontrol Paneli{% if demo_mode %} <span class="badge badge-soft-warning align-middle ms-2">Demo görünüm</span>{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4" id="demo-overview">
+  <div class="col-md-6 col-xl-2">
+    <div class="stat-card">
+      <div class="stat-icon bg-soft-blue"><i class="bi bi-people"></i></div>
+      <div>
+        <div class="stat-label">Toplam Üye</div>
+        <div class="stat-value">{{ total_members }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="stat-card">
+      <div class="stat-icon bg-soft-green"><i class="bi bi-calendar2-check"></i></div>
+      <div>
+        <div class="stat-label">Aktif Üyelik</div>
+        <div class="stat-value">{{ active_memberships_count }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="stat-card">
+      <div class="stat-icon bg-soft-amber"><i class="bi bi-clock-history"></i></div>
+      <div>
+        <div class="stat-label">Yaklaşan Bitiş</div>
+        <div class="stat-value">{{ upcoming_expirations_count }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="stat-card">
+      <div class="stat-icon bg-soft-green"><i class="bi bi-cash-stack"></i></div>
+      <div>
+        <div class="stat-label">Bugünkü Tahsilat</div>
+        <div class="stat-value">₺{{ payments_today_total|floatformat:0 }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="stat-card">
+      <div class="stat-icon bg-soft-purple"><i class="bi bi-wallet2"></i></div>
+      <div>
+        <div class="stat-label">Açık Bakiye</div>
+        <div class="stat-value">₺{{ outstanding_balance_total|floatformat:0 }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xl-2">
+    <div class="stat-card">
+      <div class="stat-icon bg-soft-purple"><i class="bi bi-person-plus"></i></div>
+      <div>
+        <div class="stat-label">Bu Ay Yeni Üye</div>
+        <div class="stat-value">{{ new_members_this_month_count }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-xl-7">
+    <div class="section-card h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <span class="section-kicker">Yaklaşan üyelik bitişleri</span>
+          <h2 class="section-title mb-0">Önümüzdeki 14 gün</h2>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge badge-soft">{{ upcoming_expirations_count }} üye</span>
+          {% if demo_mode %}
+            <button type="button" class="btn btn-ghost btn-sm" disabled aria-disabled="true">Üye Listesi</button>
+          {% else %}
+            <a href="{% url 'members:list' %}" class="btn btn-ghost btn-sm">Üye Listesi</a>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if upcoming_expirations %}
+        <div class="list-group list-group-flush">
+          {% for membership in upcoming_expirations %}
+            {% if demo_mode %}
+            <div class="list-group-item list-item-dark">
+            {% else %}
+            <a class="list-group-item list-item-dark text-decoration-none text-reset" href="{% url 'members:detail' membership.member.pk %}">
+            {% endif %}
+              <div class="d-flex justify-content-between align-items-start gap-3">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="avatar-circle sm">{{ membership.member.full_name|slice:":1"|upper }}</div>
+                  <div>
+                    <div class="fw-semibold">{{ membership.member.full_name }}</div>
+                    <small class="text-soft">{{ membership.plan.name }} • {{ membership.start_date|date:"d.m.Y" }} - {{ membership.end_date|date:"d.m.Y" }}</small>
+                  </div>
+                </div>
+                <span class="badge bg-warning text-dark">{{ membership.days_remaining }} gün</span>
+              </div>
+            {% if demo_mode %}
+            </div>
+            {% else %}
+            </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon"><i class="bi bi-check2-circle"></i></div>
+          <h3>Yakında bitecek üyelik yok</h3>
+          <p class="text-soft mb-0">Şu anda dikkat edilmesi gereken bir üyelik bulunmuyor.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-xl-5">
+    <div class="section-card h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <span class="section-kicker">Kayıt tarihine göre sıralı</span>
+          <h2 class="section-title mb-0">En yeni üyeler</h2>
+        </div>
+        {% if demo_mode %}
+          <button type="button" class="btn btn-accent btn-sm" disabled aria-disabled="true">Yeni Üye</button>
+        {% else %}
+          <a href="{% url 'members:add' %}" class="btn btn-accent btn-sm">Yeni Üye</a>
+        {% endif %}
+      </div>
+
+      {% if recent_members %}
+        <div class="stack-list">
+          {% for member in recent_members %}
+            {% if demo_mode %}
+              <div class="stack-item stack-item-button">
+                <div class="d-flex align-items-center gap-3">
+                  {% if member.photo %}
+                    <img src="{{ member.photo.url }}" alt="{{ member.full_name }}" class="avatar-photo sm">
+                  {% else %}
+                    <div class="avatar-circle sm">{{ member.full_name|slice:":1"|upper }}</div>
+                  {% endif %}
+                  <div>
+                    <div class="fw-semibold">{{ member.full_name }}</div>
+                    <small class="text-soft">
+                      {{ member.current_membership_status }}
+                      {% if member.current_membership_plan %}
+                        • {{ member.current_membership_plan }}
+                      {% endif %}
+                    </small>
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="fw-semibold">{{ member.created_at|date:"d.m.Y" }}</div>
+                  <small class="text-soft">Kayıt tarihi</small>
+                </div>
+              </div>
+            {% else %}
+              <a class="stack-item" href="{% url 'members:detail' member.pk %}">
+                <div class="d-flex align-items-center gap-3">
+                  {% if member.photo %}
+                    <img src="{{ member.photo.url }}" alt="{{ member.full_name }}" class="avatar-photo sm">
+                  {% else %}
+                    <div class="avatar-circle sm">{{ member.full_name|slice:":1"|upper }}</div>
+                  {% endif %}
+                  <div>
+                    <div class="fw-semibold">{{ member.full_name }}</div>
+                    <small class="text-soft">
+                      {{ member.current_membership_status }}
+                      {% if member.current_membership_plan %}
+                        • {{ member.current_membership_plan }}
+                      {% endif %}
+                    </small>
+                  </div>
+                </div>
+                <div class="text-end">
+                  <div class="fw-semibold">{{ member.created_at|date:"d.m.Y" }}</div>
+                  <small class="text-soft">Kayıt tarihi</small>
+                </div>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon"><i class="bi bi-person-plus"></i></div>
+          <h3>Henüz üye yok</h3>
+          <p class="text-soft mb-0">İlk üyenizi ekleyerek paneli doldurmaya başlayın.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if demo_mode %}
+  <div class="row g-4 mt-1">
+    <div class="col-12">
+      <div class="section-card d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+          <span class="section-kicker">İstatistikler</span>
+          <h2 class="section-title mb-1">Gelir, ödeme yöntemi ve borç analizlerini ayrı rapor sayfasında görün.</h2>
+          <p class="text-soft mb-0">Demo görünümde raporlar temsili gösterilir, işlem ve dışa aktarma kapalıdır.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2 dashboard-cta-actions">
+          <button type="button" class="btn btn-accent dashboard-inline-btn" disabled aria-disabled="true">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span>İstatistikler</span>
+          </button>
+          <button type="button" class="btn btn-ghost dashboard-inline-btn" disabled aria-disabled="true">
+            <i class="bi bi-download"></i>
+            <span>CSV indir</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+<div class="row g-4 mt-1">
+  <div class="col-12">
+    <div class="section-card d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <div>
+        <span class="section-kicker">İstatistikler</span>
+        <h2 class="section-title mb-1">Gelir, ödeme yöntemi ve borç analizlerini ayrı rapor sayfasında görün.</h2>
+        <p class="text-soft mb-0">Daha ayrıntılı grafikler ve dışa aktarma seçenekleri için istatistikler bölümünü açın.</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2 dashboard-cta-actions">
+        <a href="{% url 'dashboard:stats' %}" class="btn btn-accent dashboard-inline-btn">
+          <i class="bi bi-graph-up-arrow"></i>
+          <span>İstatistikler</span>
+        </a>
+        <a href="{% url 'dashboard:stats' %}?format=csv" class="btn btn-ghost dashboard-inline-btn">
+          <i class="bi bi-download"></i>
+          <span>CSV indir</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+  {% endif %}
+{% if demo_mode %}
+<div class="row g-4 mt-2">
+  <div class="col-12">
+    <div class="section-card demo-tab-card">
+      <div>
+        <span class="section-kicker">Demo Gezinme</span>
+        <h2 class="section-title mb-1">Örnek verilerle panel ekranlarını inceleyin.</h2>
+        <p class="text-soft mb-0">Bu alan yalnızca görsel önizleme içindir; ekleme, düzenleme ve silme işlemleri kapalıdır.</p>
+      </div>
+      <div class="demo-tab-strip" aria-label="Demo ekranları">
+        <a href="#demo-overview" class="demo-tab-link"><i class="bi bi-grid-1x2"></i> Kontrol Paneli</a>
+        <a href="#demo-members" class="demo-tab-link"><i class="bi bi-people"></i> Üyeler</a>
+        <a href="#demo-memberships" class="demo-tab-link"><i class="bi bi-calendar2-check"></i> Üyelikler</a>
+        <a href="#demo-payments" class="demo-tab-link"><i class="bi bi-receipt"></i> Ödemeler</a>
+        <a href="#demo-packages" class="demo-tab-link"><i class="bi bi-layers"></i> Paketler</a>
+        <a href="#demo-stats" class="demo-tab-link"><i class="bi bi-graph-up-arrow"></i> Rapor</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12" id="demo-members">
+    <div class="section-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <span class="section-kicker">Üyeler</span>
+          <h2 class="section-title mb-0">Üye listesi önizlemesi</h2>
+        </div>
+        <span class="badge badge-soft">Salt okunur</span>
+      </div>
+      <div class="row g-3">
+        {% for member in demo_members %}
+          <div class="col-md-6 col-xl-4">
+            <div class="member-demo-card h-100">
+              <div class="d-flex justify-content-between gap-3">
+                <div>
+                  <div class="fw-semibold">{{ member.full_name }}</div>
+                  <small class="text-soft">{{ member.current_membership_status }}</small>
+                </div>
+                <span class="badge {% if member.has_debt %}badge-soft-warning{% else %}badge-soft-success{% endif %}">
+                  ₺{{ member.balance_due|floatformat:2 }}
+                </span>
+              </div>
+              <div class="member-demo-meta">
+                <span>Paket: {{ member.current_membership_plan }}</span>
+                <span>Bitiş: {{ member.current_membership_end_date|date:"d.m.Y" }}</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12" id="demo-memberships">
+    <div class="section-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <span class="section-kicker">Üyelikler</span>
+          <h2 class="section-title mb-0">Üyelik kayıtları önizlemesi</h2>
+        </div>
+        <span class="badge badge-soft">Örnek kayıtlar</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-glass align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Üye</th>
+              <th>Paket</th>
+              <th>Tarih Aralığı</th>
+              <th>Durum</th>
+              <th class="text-end">Kalan</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for membership in demo_memberships %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ membership.member.full_name }}</div>
+                  <small class="text-soft">Demo üye kartı</small>
+                </td>
+                <td>{{ membership.plan.name }}</td>
+                <td>{{ membership.period }}</td>
+                <td><span class="badge badge-soft">{{ membership.status_label }}</span></td>
+                <td class="text-end">₺{{ membership.balance_due|floatformat:2 }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-7" id="demo-payments">
+    <div class="section-card h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <span class="section-kicker">Ödemeler</span>
+          <h2 class="section-title mb-0">Tahsilat akışı önizlemesi</h2>
+        </div>
+        <span class="badge badge-soft">Sadece görüntüleme</span>
+      </div>
+      <div class="stack-list">
+        {% for payment in demo_payments %}
+          <div class="stack-item stack-item-button">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar-circle sm">{{ payment.member.full_name|slice:":1"|upper }}</div>
+              <div>
+                <div class="fw-semibold">{{ payment.member.full_name }}</div>
+                <small class="text-soft">{{ payment.payment_date|date:"d.m.Y" }} • {{ payment.method_label }}</small>
+              </div>
+            </div>
+            <div class="text-end">
+              <div class="fw-semibold">₺{{ payment.amount|floatformat:2 }}</div>
+              <small class="text-soft">{{ payment.note }} • {{ payment.status_label }}</small>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-5" id="demo-packages">
+    <div class="section-card h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <span class="section-kicker">Paketler</span>
+          <h2 class="section-title mb-0">Paket listesi önizlemesi</h2>
+        </div>
+        <span class="badge badge-soft">4 paket</span>
+      </div>
+      <div class="stack-list">
+        {% for plan in demo_plans %}
+          <div class="stack-item stack-item-button dashboard-payment-row">
+            <div class="d-flex align-items-center gap-3">
+              <div class="avatar-circle sm">{{ plan.name|slice:":1"|upper }}</div>
+              <div>
+                <div class="fw-semibold">{{ plan.name }}</div>
+                <small class="text-soft">{{ plan.duration_days }} gün • {{ plan.description }}</small>
+              </div>
+            </div>
+            <div class="text-end">
+              <div class="fw-semibold">₺{{ plan.price|floatformat:2 }}</div>
+              <small class="text-soft">{% if plan.is_active %}Aktif{% else %}Pasif{% endif %}</small>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12" id="demo-stats">
+    <div class="section-card dashboard-report-card">
+      <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
+        <div>
+          <span class="section-kicker">Rapor Önizlemesi</span>
+          <h2 class="section-title mb-1">Gelir ve üyelik özeti</h2>
+          <p class="text-soft mb-0">Demo rapor alanı, gerçek paneldeki istatistik sayfasının dolu görünümünü temsil eder.</p>
+        </div>
+        <span class="badge badge-soft">CSV ve yazdırma kapalı</span>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="dashboard-monthly-insight dashboard-monthly-insight-accent h-100">
+            <span>Bu ay tahsilat</span>
+            <strong>₺{{ payments_month_total|floatformat:2 }}</strong>
+            <small>Örnek ay içi toplam</small>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="dashboard-monthly-insight dashboard-monthly-insight-soft h-100">
+            <span>Açık bakiye</span>
+            <strong>₺{{ outstanding_balance_total|floatformat:2 }}</strong>
+            <small>Takip edilecek örnek bakiye</small>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="dashboard-monthly-insight dashboard-monthly-insight-warning h-100">
+            <span>Yaklaşan bitiş</span>
+            <strong>{{ upcoming_expirations_count }} üye</strong>
+            <small>Önümüzdeki 14 gün</small>
+          </div>
+        </div>
+      </div>
+      <div class="demo-report-visual mt-4">
+        <div class="demo-report-chart-card">
+          <div class="demo-report-chart-head">
+            <div>
+              <span class="demo-report-kicker">Aylık görünüm</span>
+              <strong>Tahsilat trendi</strong>
+            </div>
+            <span class="badge badge-soft">Örnek grafik</span>
+          </div>
+          <svg class="demo-report-chart" viewBox="0 0 720 280" role="img" aria-label="Demo tahsilat trend grafiği">
+            <defs>
+              <linearGradient id="demoReportArea" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#67e8f9" stop-opacity="0.34"></stop>
+                <stop offset="100%" stop-color="#67e8f9" stop-opacity="0.02"></stop>
+              </linearGradient>
+              <linearGradient id="demoReportLine" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stop-color="#67e8f9"></stop>
+                <stop offset="48%" stop-color="#7c8cff"></stop>
+                <stop offset="100%" stop-color="#5eead4"></stop>
+              </linearGradient>
+            </defs>
+            <g class="demo-report-grid">
+              <line x1="34" y1="56" x2="686" y2="56"></line>
+              <line x1="34" y1="112" x2="686" y2="112"></line>
+              <line x1="34" y1="168" x2="686" y2="168"></line>
+              <line x1="34" y1="224" x2="686" y2="224"></line>
+            </g>
+            <path
+              class="demo-report-area"
+              d="M 34 218 C 88 202, 112 178, 160 182 C 215 186, 244 132, 300 136 C 356 140, 382 78, 438 86 C 498 95, 530 150, 584 126 C 632 106, 660 76, 686 66 L 686 246 L 34 246 Z"
+              fill="url(#demoReportArea)"
+            ></path>
+            <path
+              class="demo-report-line"
+              d="M 34 218 C 88 202, 112 178, 160 182 C 215 186, 244 132, 300 136 C 356 140, 382 78, 438 86 C 498 95, 530 150, 584 126 C 632 106, 660 76, 686 66"
+              fill="none"
+              stroke="url(#demoReportLine)"
+              stroke-width="6"
+              stroke-linecap="round"
+            ></path>
+            <g class="demo-report-points">
+              <circle cx="160" cy="182" r="7"></circle>
+              <circle cx="300" cy="136" r="7"></circle>
+              <circle cx="438" cy="86" r="7"></circle>
+              <circle cx="584" cy="126" r="7"></circle>
+              <circle cx="686" cy="66" r="7"></circle>
+            </g>
+          </svg>
+          <div class="demo-report-axis" aria-hidden="true">
+            <span>Oca</span>
+            <span>Şub</span>
+            <span>Mar</span>
+            <span>Nis</span>
+            <span>May</span>
+            <span>Haz</span>
+          </div>
+        </div>
+
+        <div class="demo-report-side">
+          <div class="demo-report-side-item">
+            <span>En yüksek ay</span>
+            <strong>Haziran</strong>
+            <small>₺32.400 örnek tahsilat</small>
+          </div>
+          <div class="demo-report-side-item">
+            <span>Aktif üyelik oranı</span>
+            <strong>%75</strong>
+            <small>Demo dağılımı</small>
+          </div>
+          <div class="demo-report-mini-bars" aria-hidden="true">
+            <span style="height: 46%"></span>
+            <span style="height: 72%"></span>
+            <span style="height: 58%"></span>
+            <span style="height: 88%"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

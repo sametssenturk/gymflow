@@ -1,0 +1,17 @@
+{% if messages %}
+<div class="container-fluid px-0 mb-4">
+  <div class="d-grid gap-2">
+    {% for message in messages %}
+      {% with level=message.tags|default:"info" %}
+        <div
+          class="alert alert-{% if level == 'error' %}danger{% else %}{{ level }}{% endif %} alert-dismissible fade show border-0 shadow-sm"
+          role="alert"
+        >
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+      {% endwith %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}

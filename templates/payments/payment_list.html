@@ -1,0 +1,116 @@
+{% extends "app_base.html" %}
+{% block title %}GymFlow | Ödemeler{% endblock %}
+{% block page_title %}Ödemeler{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+  <div class="col-lg-8">
+    <div class="section-card h-100">
+      <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+        <div>
+          <span class="section-kicker">Ödeme sistemi</span>
+          <h2 class="section-title mb-0">Ödeme geçmişi</h2>
+        </div>
+        <div class="d-flex flex-column flex-sm-row gap-2">
+          <form class="search-form" method="get">
+            <input type="search" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Üye, paket veya not ara">
+          </form>
+          <a href="{% url 'payments:add' %}" class="btn btn-accent">
+            <i class="bi bi-plus-circle"></i>
+            Ödeme Ekle
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="stat-card h-100">
+      <div class="stat-icon bg-soft-green"><i class="bi bi-cash-stack"></i></div>
+      <div>
+        <div class="stat-label">Toplam Tahsilat</div>
+        <div class="stat-value">₺{{ total_received|floatformat:2 }}</div>
+        <small class="text-soft">İptal edilmemiş kayıtların filtreli toplamı</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-card">
+  {% if payments %}
+    <div class="table-responsive">
+      <table class="table table-glass align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Tarih</th>
+            <th>Üye</th>
+            <th>Üyelik</th>
+            <th>Yöntem</th>
+            <th>Tutar</th>
+            <th>Durum</th>
+            <th>Not</th>
+            <th class="text-end">İşlem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for payment in payments %}
+            <tr class="{% if not payment.is_active_record %}opacity-75{% endif %}">
+              <td>{{ payment.payment_date|date:"d.m.Y" }}</td>
+              <td>
+                <a href="{% url 'members:detail' payment.member.pk %}" class="text-decoration-none text-reset">
+                  <div class="fw-semibold">{{ payment.member.full_name }}</div>
+                  <small class="text-soft">{{ payment.member.email|default:"-" }}</small>
+                </a>
+              </td>
+              <td>
+                <div class="fw-semibold">{{ payment.membership.plan.name }}</div>
+                <small class="text-soft">{{ payment.membership.period_label }}</small>
+              </td>
+              <td>
+                <span class="badge {% if payment.payment_method == 'CASH' %}bg-success{% else %}bg-info text-dark{% endif %}">
+                  {{ payment.method_label }}
+                </span>
+              </td>
+              <td>₺{{ payment.amount|floatformat:2 }}</td>
+              <td>
+                <span class="badge {% if payment.is_active_record %}bg-success{% else %}bg-secondary{% endif %}">
+                  {{ payment.status_label }}
+                </span>
+              </td>
+              <td>
+                <span class="text-soft">
+                  {{ payment.note|default:"-" }}
+                  {% if payment.voided_at %}
+                    <br><small>İptal: {{ payment.voided_at|date:"d.m.Y H:i" }}</small>
+                  {% endif %}
+                </span>
+              </td>
+              <td>
+                <div class="d-flex justify-content-end gap-2">
+                  {% if payment.is_active_record %}
+                    <a class="btn btn-outline-light btn-sm" href="{% url 'payments:edit' payment.pk %}">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a class="btn btn-outline-danger btn-sm" href="{% url 'payments:delete' payment.pk %}">
+                      <i class="bi bi-x-circle"></i>
+                    </a>
+                  {% else %}
+                    <span class="text-soft small">Arşiv</span>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "includes/pagination.html" %}
+  {% else %}
+    <div class="empty-state py-5">
+      <div class="empty-icon"><i class="bi bi-receipt"></i></div>
+      <h3>Henüz ödeme yok</h3>
+      <p class="text-soft mb-4">İlk ödeme kaydı burada listelenecek.</p>
+      <a href="{% url 'payments:add' %}" class="btn btn-accent">İlk Ödemeyi Ekle</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

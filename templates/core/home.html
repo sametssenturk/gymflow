@@ -1,0 +1,366 @@
+{% extends "public_base.html" %}
+{% block title %}GymFlow | Spor salonu için üye ve tahsilat takibi{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-stretch g-4 g-lg-5">
+      <div class="col-lg-6">
+        <div class="hero-copy">
+          <span class="hero-badge">
+            <i class="bi bi-stars"></i>
+            Spor salonu yönetimi için sade panel
+          </span>
+          <h1 class="hero-title">
+            Üyelik ve tahsilat takibini tek ekranda toplayın.
+          </h1>
+          <p class="hero-lead">
+            GymFlow; üye profillerini, paket sürelerini, yaklaşan bitişleri ve ödeme durumunu düzenli bir yönetim
+            panelinde birleştirir. Günlük akışı hızlıca okuyun, hangi üyeye ne zaman dönmeniz gerektiğini net görün.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-accent btn-lg" href="{% url 'accounts:login' %}">
+              <i class="bi bi-box-arrow-in-right"></i>
+              Hemen Giriş Yap
+            </a>
+            <a class="btn btn-ghost btn-lg" href="#ozellikler">
+              <i class="bi bi-arrow-down"></i>
+              Özellikleri İncele
+            </a>
+          </div>
+          <div class="hero-points">
+            <div class="hero-point">
+              <i class="bi bi-check2-circle"></i>
+              <span>Yaklaşan üyelik bitişlerini erken fark edin</span>
+            </div>
+            <div class="hero-point">
+              <i class="bi bi-check2-circle"></i>
+              <span>Tahsilat ve açık bakiye takibini tek yerde görün</span>
+            </div>
+            <div class="hero-point">
+              <i class="bi bi-check2-circle"></i>
+              <span>Üye geçmişine ihtiyaç duyduğunuz anda ulaşın</span>
+            </div>
+          </div>
+          <div class="hero-metrics">
+            <div class="mini-metric">
+              <div class="metric-value">Üye profili</div>
+              <div class="metric-label">İletişim, not, fotoğraf ve geçmiş hareketler aynı kartta tutulur.</div>
+            </div>
+            <div class="mini-metric">
+              <div class="metric-value">Paket takibi</div>
+              <div class="metric-label">Başlangıç, bitiş ve dondurma bilgileri düzenli şekilde görünür.</div>
+            </div>
+            <div class="mini-metric">
+              <div class="metric-value">Rapor görünümü</div>
+              <div class="metric-label">Günlük tahsilat, açık bakiye ve üyelik durumu hızlıca okunur.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="hero-visual">
+          <div class="hero-visual-frame hero-visual-frame-preview hero-visual-frame-dashboard">
+            <div class="hero-dashboard-window">
+              <aside class="hero-dashboard-sidebar">
+                <div class="hero-dashboard-brand">
+                  <span class="hero-dashboard-brand-mark">G</span>
+                  <div class="hero-dashboard-brand-copy">
+                    <strong>GymFlow</strong>
+                    <span>Operasyon Merkezi</span>
+                  </div>
+                </div>
+
+                <nav class="hero-dashboard-nav" aria-label="Önizleme menüsü">
+                  <span class="hero-dashboard-nav-item active">Kontrol Paneli</span>
+                  <span class="hero-dashboard-nav-item">Üyeler</span>
+                  <span class="hero-dashboard-nav-item">Ödemeler</span>
+                  <span class="hero-dashboard-nav-item">Paketler</span>
+                </nav>
+
+                <div class="hero-dashboard-sidebar-card">
+                  <span class="hero-dashboard-sidebar-label">Bugün</span>
+                  <strong>4 üyelik yenileme bekliyor</strong>
+                  <p>2 tahsilat ve 1 dondurma kaydı bugün takipte.</p>
+                </div>
+              </aside>
+
+              <div class="hero-dashboard-main">
+                <div class="hero-dashboard-top">
+                  <div>
+                    <span class="hero-visual-tag hero-visual-tag-alt">Panel özeti</span>
+                    <h3>Salonun güncel durumunu tek bakışta görün</h3>
+                  </div>
+                  <div class="hero-dashboard-date">16 Mayıs • Cumartesi</div>
+                </div>
+
+                <div class="hero-dashboard-stats">
+                  <div class="hero-dashboard-stat">
+                    <span>Toplam üye</span>
+                    <strong>248</strong>
+                    <em>Salonunuzdaki toplam kayıt sayısı</em>
+                  </div>
+                  <div class="hero-dashboard-stat">
+                    <span>Aktif üyelik</span>
+                    <strong>186</strong>
+                    <em>Süresi devam eden paketler</em>
+                  </div>
+                  <div class="hero-dashboard-stat">
+                    <span>Bitişi yaklaşan</span>
+                    <strong>12</strong>
+                    <em>Yenileme gerektiren üyeler</em>
+                  </div>
+                  <div class="hero-dashboard-stat">
+                    <span>Günlük tahsilat</span>
+                    <strong>₺18.400</strong>
+                    <em>Bugün tahsil edilen tutar</em>
+                  </div>
+                </div>
+
+                <div class="hero-dashboard-content">
+                  <div class="hero-dashboard-chart card-surface">
+                    <div class="hero-dashboard-section-head">
+                      <div>
+                        <span class="hero-dashboard-section-kicker">Tahsilat özeti</span>
+                        <h4>Son 7 günün tahsilatı</h4>
+                      </div>
+                      <span class="hero-dashboard-pill">Canlı özet</span>
+                    </div>
+
+                    <svg class="hero-dashboard-svg" viewBox="0 0 640 260" role="img" aria-label="Haftalık tahsilat grafiği">
+                      <defs>
+                        <linearGradient id="heroChartFill" x1="0" x2="0" y1="0" y2="1">
+                          <stop offset="0%" stop-color="#67e8f9" stop-opacity="0.35"></stop>
+                          <stop offset="100%" stop-color="#67e8f9" stop-opacity="0"></stop>
+                        </linearGradient>
+                        <linearGradient id="heroChartLine" x1="0" x2="1" y1="0" y2="0">
+                          <stop offset="0%" stop-color="#67e8f9"></stop>
+                          <stop offset="50%" stop-color="#7c8cff"></stop>
+                          <stop offset="100%" stop-color="#5eead4"></stop>
+                        </linearGradient>
+                      </defs>
+                      <g class="hero-dashboard-grid">
+                        <line x1="0" y1="40" x2="640" y2="40"></line>
+                        <line x1="0" y1="104" x2="640" y2="104"></line>
+                        <line x1="0" y1="168" x2="640" y2="168"></line>
+                        <line x1="0" y1="232" x2="640" y2="232"></line>
+                      </g>
+                      <path class="hero-dashboard-area"
+                        d="M 0 198 C 48 186, 90 162, 128 160 C 168 158, 202 122, 248 126 C 292 130, 332 74, 372 82 C 420 92, 454 130, 500 120 C 544 110, 584 78, 640 68 L 640 260 L 0 260 Z"
+                        fill="url(#heroChartFill)"></path>
+                      <path class="hero-dashboard-line"
+                        d="M 0 198 C 48 186, 90 162, 128 160 C 168 158, 202 122, 248 126 C 292 130, 332 74, 372 82 C 420 92, 454 130, 500 120 C 544 110, 584 78, 640 68"
+                        fill="none" stroke="url(#heroChartLine)" stroke-width="5" stroke-linecap="round"></path>
+                      <circle cx="128" cy="160" r="6"></circle>
+                      <circle cx="248" cy="126" r="6"></circle>
+                      <circle cx="372" cy="82" r="6"></circle>
+                      <circle cx="500" cy="120" r="6"></circle>
+                      <circle cx="640" cy="68" r="6"></circle>
+                    </svg>
+                  </div>
+
+                  <div class="hero-dashboard-side">
+                    <div class="hero-dashboard-list card-surface">
+                    <div class="hero-dashboard-section-head">
+                      <div>
+                          <span class="hero-dashboard-section-kicker">Takip listesi</span>
+                          <h4>Bugün ilgilenmeniz gereken üyeler</h4>
+                        </div>
+                      </div>
+
+                      <div class="hero-dashboard-member-row">
+                        <div class="hero-dashboard-avatar">A</div>
+                        <div>
+                          <strong>Ayşe Yılmaz</strong>
+                          <span>3 Aylık Paket • 4 gün kaldı</span>
+                        </div>
+                        <span class="hero-dashboard-status active">Yenileme</span>
+                      </div>
+                      <div class="hero-dashboard-member-row">
+                        <div class="hero-dashboard-avatar alt">M</div>
+                        <div>
+                          <strong>Mehmet Kaya</strong>
+                          <span>Aylık Paket • ₺350 bakiye</span>
+                        </div>
+                        <span class="hero-dashboard-status warn">Borçlu</span>
+                      </div>
+                      <div class="hero-dashboard-member-row">
+                        <div class="hero-dashboard-avatar soft">E</div>
+                        <div>
+                          <strong>Elif Demir</strong>
+                          <span>Donduruldu • 3 gün sonra açılır</span>
+                        </div>
+                        <span class="hero-dashboard-status paid">Askıda</span>
+                      </div>
+                    </div>
+
+                    <div class="hero-dashboard-payment card-surface">
+                      <div class="hero-dashboard-section-head">
+                        <div>
+                          <span class="hero-dashboard-section-kicker">Tahsilat</span>
+                          <h4>Günlük tahsilat özeti</h4>
+                        </div>
+                        <span class="hero-dashboard-pill accent">Bugünkü toplam</span>
+                      </div>
+                      <div class="hero-dashboard-bars" aria-hidden="true">
+                        <span style="height: 52%"></span>
+                        <span style="height: 68%"></span>
+                        <span style="height: 46%"></span>
+                        <span style="height: 76%"></span>
+                        <span style="height: 64%"></span>
+                        <span style="height: 82%"></span>
+                        <span style="height: 58%"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hero-dashboard-footer">
+                  <span class="hero-dashboard-quick">Yeni üye</span>
+                  <span class="hero-dashboard-quick">Ödeme al</span>
+                  <span class="hero-dashboard-quick">Üyelik dondur</span>
+                  <span class="hero-dashboard-quick">Yenileme kontrolü</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section" id="ozellikler">
+  <div class="container">
+    <div class="section-heading">
+      <span class="section-kicker">Özellikler</span>
+      <h2 class="section-title">Bir salon panelinde beklenen temel işler, anlaşılır bir akışta bir araya gelir.</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-3">
+        <div class="feature-card h-100">
+          <div class="feature-icon"><i class="bi bi-people"></i></div>
+          <h3>Üye Yönetimi</h3>
+          <p>Her üyenin iletişim bilgileri, notları, fotoğrafı, üyelikleri ve ödeme geçmişi tek profilde tutulur.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="feature-card h-100">
+          <div class="feature-icon"><i class="bi bi-calendar2-check"></i></div>
+          <h3>Paket ve Süre Takibi</h3>
+          <p>Aylık, dönemlik veya yıllık paketler için başlangıç, bitiş ve kalan süre bilgileri kolayca izlenir.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="feature-card h-100">
+          <div class="feature-icon"><i class="bi bi-cash-coin"></i></div>
+          <h3>Ödeme Takibi</h3>
+          <p>Nakit ve kart tahsilatları üyeliklerle eşleşir; açık bakiye ve son ödemeler hızlıca görünür.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-xl-3">
+        <div class="feature-card h-100">
+          <div class="feature-icon"><i class="bi bi-shield-lock"></i></div>
+          <h3>Düzenli Panel Akışı</h3>
+          <p>Kontrol paneli, üyeler, paketler, ödemeler ve istatistikler aynı tasarım diliyle ilerler.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section">
+  <div class="container">
+    <div class="section-heading">
+      <span class="section-kicker">Panel Akışı</span>
+      <h2 class="section-title">Gün içinde en çok bakılan bilgiler sade kartlar ve listelerle öne çıkar.</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card h-100">
+          <div class="feature-icon"><i class="bi bi-speedometer2"></i></div>
+          <h3>Kontrol Paneli</h3>
+          <p>Toplam üye, aktif üyelik, yaklaşan bitişler, günlük tahsilat ve açık bakiye ilk ekranda görünür.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card h-100">
+          <div class="feature-icon"><i class="bi bi-person-lines-fill"></i></div>
+          <h3>Üye Detayı</h3>
+          <p>Seçilen üyenin mevcut durumu, üyelikleri, kalan borcu ve tahsilat hareketleri tek sayfada toplanır.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card h-100">
+          <div class="feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+          <h3>İstatistikler</h3>
+          <p>Tahsilat trendi, ödeme yöntemi dağılımı, paket kullanımı ve borç takibi ayrı rapor ekranında sunulur.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="showcase-section" id="cozum">
+  <div class="container">
+    <div class="showcase-card">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <span class="section-kicker">Günlük görünüm</span>
+          <h2 class="section-title mb-3">Salonun günlük durumunu hızlıca okuyabileceğiniz bir çalışma alanı.</h2>
+          <p class="text-soft mb-4">
+            Ana ekran; yaklaşan üyelik bitişlerini, yeni kayıtları ve finans özetlerini sade bir düzende gösterir.
+            Detay gerektiğinde üye kartına, ödeme listesine veya istatistik ekranına tek adımda geçebilirsiniz.
+          </p>
+          <div class="preview-grid">
+            <div class="preview-stat">
+              <strong>Yenileme</strong>
+              <span class="preview-label">Yakında bitecek üyelikler ayrı bir takip listesinde görünür.</span>
+            </div>
+            <div class="preview-stat">
+              <strong>Bakiye</strong>
+              <span class="preview-label">Üyelerin kalan borcu profil ve rapor ekranlarında netleşir.</span>
+            </div>
+            <div class="preview-stat">
+              <strong>Tahsilat</strong>
+              <span class="preview-label">Günlük ve aylık ödeme özeti yönetim panelinde yer alır.</span>
+            </div>
+            <div class="preview-stat">
+              <strong>Geçmiş</strong>
+              <span class="preview-label">Üyelik ve ödeme hareketleri üye kartı üzerinden takip edilir.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="cta-panel">
+            <div class="cta-icon"><i class="bi bi-shield-check"></i></div>
+            <h3>Paneli açın, örnek yönetim akışını inceleyin</h3>
+            <p class="text-soft mb-4">Demo görünümde kontrol panelini, üye listesini, paketleri ve ödeme akışını işlem yapmadan gezebilirsiniz.</p>
+            <a href="{% url 'accounts:login' %}" class="btn btn-accent btn-lg w-100">Giriş Yap</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="feature-section">
+  <div class="container">
+    <div class="showcase-card demo-callout">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+          <span class="section-kicker">Demo Görünüm</span>
+          <h2 class="section-title mb-2">Giriş yapmadan örnek panel deneyimini inceleyin.</h2>
+          <p class="text-soft mb-0">
+            Demo ekranı gerçek kayıt oluşturmaz; yalnızca arayüzün genel yapısını ve sayfalar arasındaki geçişi gösterir.
+          </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a href="{% url 'demo_dashboard' %}" class="btn btn-ghost btn-lg">Demo Görünümü Aç</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

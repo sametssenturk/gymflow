@@ -1,0 +1,27 @@
+{% extends "app_base.html" %}
+{% block title %}GymFlow | {% if object %}Üye Düzenle{% else %}Yeni Üye{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Üye Düzenle{% else %}Yeni Üye{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-shell">
+  <div class="mb-4">
+    <span class="section-kicker">Üye yönetimi</span>
+    <h2 class="section-title mb-2">{% if object %}Bilgileri güncelleyin{% else %}Yeni üye oluşturun{% endif %}</h2>
+    <p class="text-soft mb-0">Fotoğraf, iletişim bilgileri ve not alanı ile üye profilini tamamlayın.</p>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% include "includes/form_fields.html" %}
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <button type="submit" class="btn btn-accent">
+        <i class="bi bi-save"></i>
+        Kaydet
+      </button>
+      <a href="{% if object %}{% url 'members:detail' object.pk %}{% else %}{% url 'members:list' %}{% endif %}" class="btn btn-ghost">
+        Vazgeç
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "app_base.html" %}
+{% block title %}GymFlow | {% if object %}Üyelik Düzenle{% else %}Yeni Üyelik{% endif %}{% endblock %}
+{% block page_title %}{% if object %}Üyelik Düzenle{% else %}Yeni Üyelik{% endif %}{% endblock %}
+
+{% block content %}
+<div class="form-shell">
+  <div class="mb-4">
+    <span class="section-kicker">Üye üyeliği</span>
+    <h2 class="section-title mb-2">{% if object %}Üyelik bilgilerini güncelleyin{% else %}Yeni üyelik kaydı oluşturun{% endif %}</h2>
+    <p class="text-soft mb-0">Bu ekran üyenin seçili paketi, tarih aralığı ve notlarını yönetir.</p>
+  </div>
+
+  {% if object %}
+    <div class="alert alert-warning border-0 mb-4">
+      Üyelik başladıysa, dondurulduysa veya bu kayda ödeme işlendiysa paket ve tarih bilgileri artık değiştirilemez.
+      Böyle durumlarda geçmişi korumak için yeni üyelik açın; bu ekrandan not bilgisini yine güncelleyebilirsiniz.
+    </div>
+  {% endif %}
+
+  {% if latest_membership and not object %}
+    <div class="alert alert-info border-0 mb-4">
+      Bu üyeye ait geçmiş üyelikler korunur; yeni dönem için ayrı bir üyelik kaydı açıyorsunuz.
+    </div>
+  {% endif %}
+
+  {% if member %}
+    <div class="summary-strip mb-4">
+      <div class="d-flex align-items-center gap-3">
+        {% if member.photo %}
+          <img src="{{ member.photo.url }}" alt="{{ member.full_name }}" class="avatar-photo sm">
+        {% else %}
+          <div class="avatar-circle sm">{{ member.full_name|slice:":1"|upper }}</div>
+        {% endif %}
+        <div>
+          <div class="fw-semibold">{{ member.full_name }}</div>
+          <small class="text-soft">{{ member.email|default:"-" }}</small>
+        </div>
+      </div>
+      <a href="{% url 'members:detail' member.pk %}" class="btn btn-ghost btn-sm">Üye Profili</a>
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include "includes/form_fields.html" %}
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <button type="submit" class="btn btn-accent">
+        <i class="bi bi-save"></i>
+        Kaydet
+      </button>
+      <a href="{% if member %}{% url 'members:detail' member.pk %}{% else %}{% url 'members:list' %}{% endif %}" class="btn btn-ghost">
+        Vazgeç
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "public_base.html" %}
+{% block title %}GymFlow | Giriş Yap{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+  <div class="container">
+    <div class="row justify-content-center align-items-stretch g-4">
+      <div class="col-xl-5 d-none d-xl-block">
+        <div class="auth-hero h-100">
+          <span class="hero-badge">
+            <i class="bi bi-unlock"></i>
+            Yönetim paneli
+          </span>
+          <h1 class="hero-title">Operasyonları tek yerden yönetin.</h1>
+          <p class="hero-lead">
+            Üye takibi, üyelik süresi ve tahsilat akışını tek panelde topluyoruz.
+            Giriş yaptıktan sonra kontrol paneli, üyeler, üyelikler ve ödemelere hızlıca erişebilirsiniz.
+          </p>
+          <div class="auth-points">
+            <div><i class="bi bi-check2-circle"></i> Yöneticiler için güvenli erişim</div>
+            <div><i class="bi bi-check2-circle"></i> Hızlı üyelik takibi</div>
+            <div><i class="bi bi-check2-circle"></i> Borç ve ödeme görünürlüğü</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-5 col-lg-7 col-md-9">
+        <div class="form-shell auth-login-shell">
+          <div class="mb-4">
+            <span class="section-kicker">Giriş</span>
+            <h2 class="section-title mb-2">Panel erişimi</h2>
+            <p class="text-soft mb-0">Yetkili kullanıcı bilgilerinizle giriş yapın.</p>
+          </div>
+
+          <form method="post" novalidate class="auth-login-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger border-0">
+                {% for error in form.non_field_errors %}
+                  <div>{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <div class="auth-login-fields">
+              {% for field in form.visible_fields %}
+                <div class="mb-3">
+                  <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  {{ field }}
+                  {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                  {% endif %}
+                  {% for error in field.errors %}
+                    <div class="text-danger small mt-1">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-accent btn-lg w-100 mt-2">
+              <i class="bi bi-box-arrow-in-right"></i>
+              Giriş Yap
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

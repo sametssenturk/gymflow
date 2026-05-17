@@ -1,0 +1,37 @@
+{% extends "app_base.html" %}
+{% block title %}GymFlow | Üyelik Dondur{% endblock %}
+{% block page_title %}Üyelik Dondur{% endblock %}
+
+{% block content %}
+<div class="form-shell">
+  <div class="mb-4">
+    <span class="section-kicker">Üye hareketi</span>
+    <h2 class="section-title mb-2">{{ member.full_name }} için üyelik dondurma</h2>
+    <p class="text-soft mb-0">
+      Seçtiğiniz tarih aralığı kadar üyelik süresi otomatik uzatılır ve durum Donduruldu olarak işaretlenir.
+    </p>
+  </div>
+
+  <div class="summary-strip mb-4">
+    <div>
+      <div class="fw-semibold">{{ membership.plan.name }}</div>
+      <small class="text-soft">
+        Mevcut bitiş: {{ membership.end_date|date:"d.m.Y" }} • Şu anki durum: {{ membership.get_status_display }}
+      </small>
+    </div>
+    <span class="badge badge-soft">Üye • Dondurma</span>
+  </div>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% include "includes/form_fields.html" %}
+    <div class="d-flex flex-wrap gap-2 mt-4">
+      <button type="submit" class="btn btn-accent">
+        <i class="bi bi-pause-circle"></i>
+        Dondur
+      </button>
+      <a href="{% url 'members:detail' member.pk %}" class="btn btn-ghost">Vazgeç</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
