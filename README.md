@@ -34,10 +34,10 @@ Bu proje yalnızca arayüz odaklı bir demo değildir. İş kurallarını modell
 
 **Canlı adres:** [https://gymflow-jpmt.onrender.com](https://gymflow-jpmt.onrender.com)
 
-**Demo giriş bilgileri**
+**Demo erişimi**
 
-- Kullanıcı adı: `demo-admin`
-- Parola: `Demo12345!`
+- Canlı demo giriş bilgileri README içinde public olarak paylaşılmaz.
+- Erişim bilgileri proje sahibi tarafından kontrollü şekilde ayrıca paylaşılır.
 
 **Canlı demo davranışı**
 
@@ -47,6 +47,10 @@ Bu proje yalnızca arayüz odaklı bir demo değildir. İş kurallarını modell
 - Mevcut canlı yapılandırmada otomatik veri sıfırlama kapalıdır; veri, yeniden seed edilene kadar son haliyle kalır.
 
 ## Ekran Görüntüleri
+
+### Kısa Ürün Turu
+
+![GymFlow ürün turu](docs/images/gymflow-tour.gif)
 
 ### Kontrol Paneli
 
