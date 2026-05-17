@@ -50,7 +50,7 @@ Bu proje yalnızca arayüz odaklı bir demo değildir. İş kurallarını modell
 
 ### Kısa Ürün Turu
 
-![GymFlow ürün turu](docs/images/gymflow-tour.gif)
+![GymFlow ürün turu](docs/images/gymflow-tour-detailed.gif)
 
 ### Kontrol Paneli
 
