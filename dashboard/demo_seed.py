@@ -266,33 +266,52 @@ def _maybe_freeze_membership(membership: Membership, seed: int):
             "Operasyon veri seti\n"
             f"Dondurma: {freeze_start:%d.%m.%Y} - {freeze_end:%d.%m.%Y}"
         )
-        membership.save(
-            update_fields=[
-                "end_date",
-                "freeze_start_date",
-                "freeze_end_date",
-                "status",
-                "notes",
-                "updated_at",
-            ]
-        )
+        _sync_membership_state(membership)
 
 
-def _create_payment(
+def _sync_membership_state(membership: Membership):
+    today = timezone.localdate()
+    if (
+        membership.status == Membership.Status.PAUSED
+        and membership.freeze_end_date
+        and membership.freeze_end_date < today
+    ):
+        if membership.end_date and membership.end_date < today:
+            membership.status = Membership.Status.EXPIRED
+        else:
+            membership.status = Membership.Status.ACTIVE
+
+    if membership.status != Membership.Status.PAUSED:
+        if membership.end_date and membership.end_date < today:
+            membership.status = Membership.Status.EXPIRED
+        elif membership.start_date and membership.start_date > today:
+            membership.status = Membership.Status.PLANNED
+        elif membership.start_date and (membership.end_date is None or membership.end_date >= today):
+            membership.status = Membership.Status.ACTIVE
+
+
+def _build_payment(
     member: Member,
     membership: Membership,
     amount: Decimal,
     payment_date: date,
     payment_index: int,
     seed: int,
+    now,
+    status: str = Payment.Status.ACTIVE,
+    voided_at=None,
 ):
-    return Payment.objects.create(
+    return Payment(
         member=member,
         membership=membership,
         amount=amount,
         payment_date=payment_date,
         payment_method=_payment_method(seed + payment_index),
+        status=status,
+        voided_at=voided_at,
         note=f"Tahsilat {membership.start_date:%Y%m}-{payment_index}",
+        created_at=now,
+        updated_at=now,
     )
 
 
@@ -301,6 +320,8 @@ def _create_membership_payments(
     membership: Membership,
     index: int,
     period_index: int,
+    payment_records: list[Payment],
+    now,
 ) -> int:
     if membership.start_date > timezone.localdate():
         return 0
@@ -309,25 +330,31 @@ def _create_membership_payments(
     amounts = _payment_amounts_for(membership, index, period_index)
     for payment_index, amount in enumerate(amounts):
         payment_date = _payment_date_for(membership.start_date, payment_index)
-        payment = _create_payment(
+        payment = _build_payment(
             member=member,
             membership=membership,
             amount=amount,
             payment_date=payment_date,
             payment_index=payment_index + 1,
             seed=index + period_index,
+            now=now,
         )
+        payment_records.append(payment)
         created_payments += 1
 
         if payment_index == 0 and (index + period_index) % 37 == 0:
-            payment.void()
-            _create_payment(
-                member=member,
-                membership=membership,
-                amount=amount,
-                payment_date=min(payment_date + timedelta(days=1), timezone.localdate()),
-                payment_index=payment_index + 2,
-                seed=index + period_index + 11,
+            payment.status = Payment.Status.VOIDED
+            payment.voided_at = now
+            payment_records.append(
+                _build_payment(
+                    member=member,
+                    membership=membership,
+                    amount=amount,
+                    payment_date=min(payment_date + timedelta(days=1), timezone.localdate()),
+                    payment_index=payment_index + 2,
+                    seed=index + period_index + 11,
+                    now=now,
+                )
             )
             created_payments += 1
 
@@ -363,6 +390,9 @@ def seed_demo_data(
         created_members = 0
         created_memberships = 0
         created_payments = 0
+        now = timezone.now()
+        membership_records = []
+        payment_inputs = []
 
         for index in range(total_members):
             member_number = index + 1
@@ -393,23 +423,23 @@ def seed_demo_data(
                 start_date = cursor
                 end_date = start_date + timedelta(days=plan.duration_days)
 
-                membership = Membership.objects.create(
+                membership = Membership(
                     member=member,
                     plan=plan,
                     start_date=start_date,
                     end_date=end_date,
                     notes="Operasyon veri seti",
                     status=Membership.Status.ACTIVE,
+                    agreed_price=plan.price,
+                    created_at=now,
+                    updated_at=now,
                 )
                 created_memberships += 1
 
+                _sync_membership_state(membership)
                 _maybe_freeze_membership(membership, index + period_index)
-                created_payments += _create_membership_payments(
-                    member=member,
-                    membership=membership,
-                    index=index,
-                    period_index=period_index,
-                )
+                membership_records.append(membership)
+                payment_inputs.append((member, membership, index, period_index))
 
                 if churn_after_first_period or end_date >= today:
                     break
@@ -417,6 +447,23 @@ def seed_demo_data(
                 gap_days = 1 + ((index + period_index) % 18)
                 cursor = end_date + timedelta(days=gap_days)
                 period_index += 1
+
+        if membership_records:
+            Membership.objects.bulk_create(membership_records, batch_size=500)
+
+        payment_records = []
+        for member, membership, index, period_index in payment_inputs:
+            created_payments += _create_membership_payments(
+                member=member,
+                membership=membership,
+                index=index,
+                period_index=period_index,
+                payment_records=payment_records,
+                now=now,
+            )
+
+        if payment_records:
+            Payment.objects.bulk_create(payment_records, batch_size=1000)
 
     Membership.sync_lifecycle()
 
